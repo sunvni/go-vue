@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  server:
+    container_name: go-server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      - DB_HOST=mysql
+
+  node:
+    container_name: build-node
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/app
+    ports:
+      - "5173:5173"
+    depends_on:
+      - server
+    tty: true
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: govue
+      MYSQL_USER: govue_user
+      MYSQL_PASSWORD: secret
+    volumes:
+      - mysql_data:/var/lib/mysql # Persistent storage for MySQL data
+
+volumes:
+  mysql_data: {}
