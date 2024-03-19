@@ -1,0 +1,4 @@
+# this folder will be build by the build script
+*
+!favicon.ico
+!.gitignore

@@ -8,19 +8,18 @@ import (
 )
 
 
-func Handle(router *gin.Engine) {
-
-	prefix := "/api/v1"
-
-	
-
-	router.LoadHTMLGlob("public/*.html")
-	router.Static("/assets", "./public/assets")
-	router.Static("/favicon.ico", "./public/favicon.ico")
-
+func HandleApi(router *gin.Engine) {
 	// Routes
-	router.POST(prefix + "/counter/increment", homeController.IncrementCounter)
-	router.POST(prefix + "/counter/decrement", homeController.DecrementCounter)
-	router.GET(prefix + "/tweets", tweet.GetTweets)
-	router.POST(prefix + "/tweet", tweet.AddTweet)
+	apiRoutes := router.Group("/api/v1")
+
+	apiRoutes.Use(func (c *gin.Context) {
+        c.Header("Content-Type", "application/json")
+        c.Header("X-Custom-Header", "custom")
+        c.Next()
+    })
+
+	apiRoutes.POST("/counter/increment", homeController.IncrementCounter)
+	apiRoutes.POST("/counter/decrement", homeController.DecrementCounter)
+	apiRoutes.GET("/tweets", tweet.GetTweets)
+	apiRoutes.POST("/tweet", tweet.AddTweet)
 }
